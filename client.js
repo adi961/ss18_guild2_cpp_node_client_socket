@@ -8,6 +8,10 @@ var ip,
     uuid,
     userName
 
+const connection = {
+    host: 'localhost',
+    port: '8888'
+}
 const socket = new net.Socket()
 socket.setEncoding()
 
@@ -168,4 +172,21 @@ socket.on('data', function(data) {
             chatBox.append(createDispMsg(payload.data, false))
             }
     }
+})
+
+socket.on('error', (e) => {
+    console.log('Error:', e)
+    if(e === 'ECONNREFUSED') {
+        setTimeout(() => {
+            socket.end()
+        },1000)
+        
+    }
+})
+
+socket.on('close', () => {
+    chatBox.append('Connection lost... reconnecting...\n')
+    console.log('Connection lost... reconnecting...')
+    socket.end()
+    connect()
 })
